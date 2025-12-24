@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>My 2026 Magic Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+  
+  <!-- jsPDF + html2canvas for PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="theme-color" content="#e74c3c">
+  
+  <!-- Our styles -->
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>My 2026 Calendar</h1>
+    <div style="text-align: center; margin: 20px 0;">
+      <button id="downloadPdf" class="pdf-btn">📥 Download as PDF</button>
+    </div>
+    <div id="calendar"></div>
+    
+    <!-- Modal for events -->
+    <div id="eventModal" class="modal">
+      <div class="modal-content">
+        <span class="close">×</span>
+        <h2 id="modalTitle"></h2>
+        <img id="modalImage" src="" alt="">
+        <div id="modalVideo"></div>
+        <p id="modalDescription"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="script.js"></script>
+  
+  <!-- PWA service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; color: #2c3e50; }
+#calendar { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.fc-theme-standard .fc-scrollgrid { background-size: cover; background-position: center; transition: background 0.8s; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+.modal-content { background: white; padding: 20px; border-radius: 12px; max-width: 90%; max-height: 90%; overflow: auto; position: relative; }
+.close { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; }
+#modalImage { max-width: 100%; border-radius: 8px; margin: 15px 0; }
+#modalVideo iframe { width: 100%; height: 400px; border: none; }
+.pdf-btn { background: #e74c3c; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); }
+.pdf-btn:hover { background: #c0392b; }
+
+/* Style calendar day numbers to stand out on background images */
+.fc-daygrid-day-number {
+  font-size: 1.2em; /* Larger size */
+  font-weight: bold; /* Bold text */
+  color: #ffffff; /* White text for contrast */
+  text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000; /* Black outline/shadow for readability on any background */
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black background behind number */
+  padding: 4px 8px; /* Padding for better visibility */
+  border-radius: 4px; /* Rounded corners */
+  display: inline-block; /* Keep it compact */
+}
+
+/* Optional: Hover effect for interactivity */
+.fc-daygrid-day-number:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffd700; /* Gold hover for fun */
+}
+
+/* Ensure weekends or today stand out differently if needed */
+.fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  color: #ffd700; /* Gold for today */
+  background-color: rgba(255, 215, 0, 0.3); /* Light gold bg */
+}
+
+.fc-daygrid-day.fc-day-sat .fc-daygrid-day-number,
+.fc-daygrid-day.fc-day-sun .fc-daygrid-day-number {
+  color: #ffcccc; /* Lighter red for weekends */
+}
