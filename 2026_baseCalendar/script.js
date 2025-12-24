@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Change background when month changes
     datesSet: function(info) {
-      const month = info.view.currentStart.getMonth() + 1; // 1-12
+      const month = info.view.currentStart.getMonth() + 1;
       document.querySelector('.fc-scrollgrid').style.backgroundImage = monthBackgrounds[month];
     },
 
@@ -35,16 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
       // Add more holidays here
     ],
 
-    // Click on a date (empty or with event)
+    // Click any date → open note modal
     dateClick: function(info) {
-      if (info.dateStr < '2026-01-01' || info.dateStr > '2026-12-31') return;
-      openNoteModal(info.dateStr);
+      const dateStr = info.dateStr;
+      if (dateStr < '2026-01-01' || dateStr > '2026-12-31') return;
+      openNoteModal(dateStr);
     },
 
-    // Click on an event
+    // Click an event
     eventClick: function(info) {
       if (info.event.extendedProps.isUserNote) {
-        // User note clicked
+        // User note
         document.getElementById('modalTitle').textContent = info.event.title;
         document.getElementById('modalImage').style.display = 'none';
         document.getElementById('modalVideo').innerHTML = '';
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <button onclick="deleteUserNote('${info.event.startStr}')" style="background:#e74c3c; margin-left:10px;">Delete</button>
         `;
       } else {
-        // Predefined holiday
+        // Holiday
         document.getElementById('modalTitle').textContent = info.event.title;
         const img = document.getElementById('modalImage');
         const vid = document.getElementById('modalVideo');
@@ -84,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   calendar.render();
 
-  // === Load saved user notes from localStorage ===
+  // Load saved user notes from localStorage
   const savedNotes = JSON.parse(localStorage.getItem('2026-calendar-notes') || '[]');
   savedNotes.forEach(note => {
     calendar.addEvent({
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // === Close modal ===
+  // Close modal
   document.querySelector('.close').onclick = () => {
     document.getElementById('eventModal').style.display = 'none';
     document.getElementById('modalVideo').innerHTML = '';
@@ -110,17 +111,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  // === Luxon-powered date formatter (perfect local date display) ===
+  function formatDateString(dateStr) {
+    const dt = luxon.DateTime.fromISO(dateStr, { zone: 'local' });
+    return dt.toLocaleString(luxon.DateTime.DATE_HUGE); // e.g., "Tuesday, January 20, 2026"
+  }
+
   // === Note Functions ===
   window.openNoteModal = function(dateStr) {
     const existing = calendar.getEvents().find(e => e.startStr === dateStr && e.extendedProps.isUserNote);
     const currentNote = existing ? existing.extendedProps.userNote : '';
     const currentTitle = existing ? existing.title.replace('📝 ', '') : '';
 
+    const formattedDate = formatDateString(dateStr);
+
     document.getElementById('modalTitle').textContent = 'Personal Note';
     document.getElementById('modalImage').style.display = 'none';
     document.getElementById('modalVideo').innerHTML = '';
     document.getElementById('modalDescription').innerHTML = `
-      <strong>${new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong><br><br>
+      <strong>${formattedDate}</strong><br><br>
       <input type="text" id="noteTitle" placeholder="Title (optional)" value="${currentTitle}" style="width:100%; padding:10px; font-size:16px; border-radius:6px; border:1px solid #ccc;"><br><br>
       <textarea id="noteText" placeholder="Write your note here..." style="width:100%; height:180px; padding:10px; font-size:16px; border-radius:6px; border:1px solid #ccc;">${currentNote}</textarea><br><br>
       <button onclick="saveUserNote('${dateStr}')" class="pdf-btn" style="background:#27ae60; padding:12px 24px;">${existing ? 'Update' : 'Save'} Note</button>
@@ -141,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const oldEvent = calendar.getEvents().find(e => e.startStr === dateStr && e.extendedProps.isUserNote);
     if (oldEvent) oldEvent.remove();
 
-    // Add new/updated note
+    // Add new note
     calendar.addEvent({
       title: titleInput ? '📝 ' + titleInput : '📝 Note',
       start: dateStr,
@@ -151,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
       extendedProps: { userNote: text, isUserNote: true }
     });
 
-    // Save all notes to localStorage
+    // Save to localStorage
     const allNotes = calendar.getEvents()
       .filter(e => e.extendedProps.isUserNote)
       .map(e => ({
@@ -171,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const event = calendar.getEvents().find(e => e.startStr === dateStr && e.extendedProps.isUserNote);
     if (event) event.remove();
 
-    // Update localStorage
     const allNotes = calendar.getEvents()
       .filter(e => e.extendedProps.isUserNote)
       .map(e => ({
@@ -184,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('eventModal').style.display = 'none';
   };
 
-  // === PDF Export (unchanged) ===
+  // === PDF Export ===
   document.getElementById('downloadPdf').addEventListener('click', async () => {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
